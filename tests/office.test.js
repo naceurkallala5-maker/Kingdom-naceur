@@ -9,7 +9,7 @@ const statusOf = (office, id) => office.board().employees.find((e) => e.id === i
 test('all employees start idle with no fake activity', () => {
   const office = fresh();
   const board = office.board();
-  assert.equal(board.employees.length, 10);
+  assert.equal(board.employees.length, 11);
   assert.ok(board.employees.every((e) => e.status === 'idle' && e.currentTask === null));
   assert.equal(board.activity.length, 0);
   assert.equal(board.attention.length, 0);

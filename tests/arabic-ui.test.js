@@ -96,7 +96,7 @@ test('every error code the server can send has an Arabic message', () => {
 
 test('every employee profile is written in Arabic', () => {
   const roster = JSON.parse(read('data/employees.json'));
-  assert.equal(roster.length, 10);
+  assert.equal(roster.length, 11);
   for (const e of roster) {
     for (const field of ['name', 'title', 'department', 'level']) {
       assert.ok(isArabicText(e[field]), `Employee ${e.id} field "${field}" is not Arabic`);

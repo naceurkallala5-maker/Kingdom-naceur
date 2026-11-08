@@ -9,6 +9,7 @@ const path = require('path');
 const { spawn, execFileSync } = require('child_process');
 const { chromium } = require('playwright');
 const { verse, ATTRIBUTION } = require('./quran.cjs');
+const facts = require('./facts.cjs');
 
 const FPS = 30;
 const FORMATS = { '9x16': [1080, 1920], '16x9': [1920, 1080] };
@@ -28,7 +29,18 @@ function prepare(plan) {
       sc.text = v.text;
       sc.ref = `سورة ${v.surahName} · الآية ${v.ayah}`;
     }
-    if (!['hook', 'text', 'ayah', 'name', 'outro'].includes(sc.type)) throw new Error(`Scene ${i + 1}: unknown type ${sc.type}`);
+    if (s.type === 'surahs') {
+      // computed from the mushaf text: surahs whose first word starts with one of the prefixes
+      sc.items = facts.surahsOpeningWith(s.opening || []);
+      if (!sc.items.length) throw new Error(`Scene ${i + 1}: no surah matches`);
+    }
+    if (s.type === 'dots') {
+      const keys = facts.versesWithWord(s.word);
+      const index = (k) => facts.verses.findIndex((v) => `${v.s}:${v.a}` === k);
+      sc.total = facts.verses.length;
+      sc.marks = keys.map((k) => { const v = verse(k); return { index: index(k), label: `${v.surahName} ${v.ayah}` }; });
+    }
+    if (!['hook', 'text', 'ayah', 'name', 'outro', 'surahs', 'dots'].includes(sc.type)) throw new Error(`Scene ${i + 1}: unknown type ${sc.type}`);
     for (const f of ['text', 'kicker', 'sub']) {
       if (sc[f] && LATIN.test(sc[f]) && !plan.allowLatin) throw new Error(`Scene ${i + 1}: ${f} has Latin letters`);
     }
@@ -51,7 +63,7 @@ async function main() {
   await page.goto('file://' + path.join(__dirname, 'engine', 'engine.html'), { waitUntil: 'networkidle' });
   await page.evaluate(() => document.fonts.ready);
   const { total, cues } = await page.evaluate((d) => E.setup(d), {
-    width: W, height: H, scenes, credit: scenes.some((s) => s.type === 'ayah') ? ATTRIBUTION : '',
+    width: W, height: H, scenes, theme: plan.theme || 'royal', credit: scenes.some((s) => s.type === 'ayah') ? ATTRIBUTION : '',
   });
   await page.evaluate(() => document.fonts.ready);
   const frames = Math.round(total * FPS);
@@ -71,15 +83,25 @@ async function main() {
   const chimes = path.join(tmp, 'chimes.wav');
   fs.writeFileSync(cuesPath, JSON.stringify(cues));
   execFileSync('python3', [path.join(__dirname, 'engine', 'chimes.py'), cuesPath, String(total), chimes]);
+  // natural soundscape (no music): wind, rain, water or night
+  const ambienceKind = arg('ambience', plan.ambience || 'none');
   const voice = arg('voice');
   const inputs = ['-i', silent, '-i', chimes];
-  let filter = '[1:a]volume=1.0[a]';
+  const parts = ['[1:a]volume=' + (voice ? '0.55' : '1.0') + '[c]'];
+  const mixIn = ['[c]'];
+  if (ambienceKind !== 'none') {
+    const amb = path.join(tmp, 'ambience.wav');
+    execFileSync('python3', [path.join(__dirname, 'engine', 'ambience.py'), ambienceKind, String(total), amb]);
+    inputs.push('-i', amb);
+    parts.push(`[${inputs.length / 2 - 1}:a]volume=${voice ? 0.25 : 0.45}[b]`); mixIn.push('[b]');
+  }
   if (voice) {
     const gain = Number(arg('voice-gain', '1.0'));
     const offsetMs = Math.round(Number(arg('voice-offset', '0')) * 1000);
     inputs.push('-i', voice);
-    filter = `[1:a]volume=0.55[c];[2:a]adelay=${offsetMs}|${offsetMs},volume=${gain}[v];[c][v]amix=inputs=2:duration=first:normalize=0[a]`;
+    parts.push(`[${inputs.length / 2 - 1}:a]adelay=${offsetMs}|${offsetMs},volume=${gain}[v]`); mixIn.push('[v]');
   }
+  const filter = parts.join(';') + ';' + mixIn.join('') + `amix=inputs=${mixIn.length}:duration=first:normalize=0[a]`;
   execFileSync('ffmpeg', ['-y', '-loglevel', 'error', ...inputs, '-filter_complex', filter, '-map', '0:v', '-map', '[a]',
     '-c:v', 'copy', '-c:a', 'aac', '-b:a', '160k', '-shortest', '-movflags', '+faststart', outPath]);
   fs.rmSync(tmp, { recursive: true, force: true });

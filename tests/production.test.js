@@ -22,12 +22,19 @@ test('the Tanzil file is the exact verified copy that was downloaded', async () 
 
 test('every verse used in production plans exists in the verified text', async () => {
   const { readdirSync, readFileSync } = await import('node:fs');
-  for (const f of readdirSync(new URL('../production/plans/', import.meta.url))) {
+  for (const f of readdirSync(new URL('../production/plans/', import.meta.url), { recursive: true }).filter((x) => String(x).endsWith('.json'))) {
     const plan = JSON.parse(readFileSync(new URL(`../production/plans/${f}`, import.meta.url), 'utf8'));
     for (const s of plan.scenes) {
       if (s.type === 'ayah') assert.ok(verse(s.verse).text.length > 0, `${f}: ${s.verse}`);
-      else assert.ok(!/[A-Za-z]/.test(s.text + (s.sub || '')), `${f}: Latin text in scene`);
+      else if (!plan.allowLatin) assert.ok(!/[A-Za-z]/.test(s.text + (s.sub || '')), `${f}: Latin text in scene`);
       assert.ok(!('text' in s && s.type === 'ayah'), `${f}: ayah text must come from the mushaf file, not the plan`);
     }
   }
+});
+
+test('computed facts come from the mushaf text', () => {
+  const facts = require('../production/facts.cjs');
+  assert.equal(facts.verses.length, 6236);
+  assert.deepEqual(facts.surahsOpeningWith(['سبح', 'يسبح']).map((x) => x.surah), [17, 57, 59, 61, 62, 64, 87]);
+  assert.deepEqual(facts.versesWithWord('الوهاب'), ['3:8', '38:9', '38:35']);
 });
