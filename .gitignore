@@ -3,3 +3,4 @@ data/*.db
 data/*.db-*
 .env
 production/out-*.mp4
+production/data/recitations/
