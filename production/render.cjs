@@ -30,7 +30,7 @@ function prepare(plan) {
       sc.text = v.text;
       sc.ref = `سورة ${v.surahName} · الآية ${v.ayah}`;
       if (plan.recitation !== false) {
-        const reciter = plan.reciter || 'maher';
+        const reciter = arg('reciter', plan.reciter || 'maher');
         const file = recitation.fileFor(s.verse, reciter);
         const len = recitation.duration(file);
         sc.audio = { file, offset: 0.9, length: len };
@@ -72,7 +72,7 @@ async function main() {
   await page.goto('file://' + path.join(__dirname, 'engine', 'engine.html'), { waitUntil: 'networkidle' });
   await page.evaluate(() => document.fonts.ready);
   const { total, cues } = await page.evaluate((d) => E.setup(d), {
-    width: W, height: H, scenes, theme: plan.theme || 'royal', credit: scenes.some((s) => s.type === 'ayah') ? ATTRIBUTION : '',
+    width: W, height: H, scenes, theme: plan.theme || 'royal', accent: arg('accent', plan.accent || 'blue'), credit: scenes.some((s) => s.type === 'ayah') ? ATTRIBUTION : '',
   });
   await page.evaluate(() => document.fonts.ready);
   const frames = Math.round(total * FPS);

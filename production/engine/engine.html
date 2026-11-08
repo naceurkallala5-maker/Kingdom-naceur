@@ -39,12 +39,18 @@ html, body { margin:0; overflow:hidden; background:var(--deep); }
 #credit { position:absolute; left:0; right:0; text-align:center; font-family:'Amiri'; font-size:calc(26*var(--u)); color:rgba(215,230,250,.7); direction:rtl; }
 #sweep { background:linear-gradient(105deg, transparent 35%, rgba(215,230,250,.0) 40%, rgba(235,243,255,.85) 50%, rgba(215,230,250,0) 60%, transparent 65%); mix-blend-mode:screen; }
 #flash { background:#fff; mix-blend-mode:screen; }
+/* gold accent (optional): highlighted words, the name, references and the crown glow turn gold */
+.gold .w.hl { color:#f1d9a0; text-shadow:0 0 calc(24*var(--u)) rgba(230,190,110,.85), 0 0 calc(60*var(--u)) rgba(200,150,60,.5); }
+.gold .t-name .words { color:#f3dcaa; text-shadow:0 0 calc(30*var(--u)) rgba(232,192,112,.9), 0 0 calc(90*var(--u)) rgba(200,150,60,.55), 0 calc(8*var(--u)) calc(30*var(--u)) rgba(10,8,0,.5); }
+.gold .t-ayah .words { color:#f6e7c4; }
+.gold .ref, .gold .kicker { color:#d9b56a; }
+.gold .en { color:rgba(241,217,160,.75); }
 #sky { display:none; }
 .night #bg { background: linear-gradient(180deg, #040918 0%, #0a1634 55%, #13254f 100%); }
 .night #sky { display:block; }
 .night #tess, .night #rays, .night #frame, .night #frame2 { display:none; }
 .night #rosette { opacity:.35 !important; }
-.en { font-family:'Cormorant Garamond'; font-weight:500; font-size:calc(46*var(--u)); color:rgba(215,230,250,.85); margin-top:calc(14*var(--u)); direction:ltr; letter-spacing:calc(.5*var(--u)); }
+.en { font-family:'Cormorant Garamond'; font-weight:500; font-size:calc(34*var(--u)); color:rgba(215,230,250,.7); margin-top:calc(12*var(--u)); direction:ltr; letter-spacing:calc(.6*var(--u)); }
 .t-surahs, .t-dots { justify-content:flex-start; padding-top:calc(300*var(--u)); }
 .landscape .t-surahs, .landscape .t-dots { padding-top:calc(150*var(--u)); }
 .t-surahs .words, .t-dots .words { font-family:'IBM Plex Sans Arabic'; font-weight:600; font-size:calc(58*var(--u)); }
@@ -255,6 +261,7 @@ const E = (() => {
     const credit = document.getElementById('credit'); credit.style.top = Math.round((W > H ? 70 : 96) * U) + 'px'; credit.textContent = data.credit || '';
     initParticles(); initSky();
     st.classList.toggle('night', data.theme === 'night');
+    st.classList.toggle('gold', data.accent === 'gold');
     scenes = []; cues = []; total = 0;
     data.scenes.forEach((s, i) => {
       const built = buildScene(s, i);

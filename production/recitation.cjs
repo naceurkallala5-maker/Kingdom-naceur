@@ -8,6 +8,10 @@ const { execFileSync } = require('child_process');
 const DIR = path.join(__dirname, 'data', 'recitations');
 const RECITERS = {
   maher: { folder: 'MaherAlMuaiqly128kbps', name: 'الشيخ ماهر المعيقلي' },
+  alafasy: { folder: 'Alafasy_128kbps', name: 'الشيخ مشاري العفاسي' },
+  sudais: { folder: 'Abdurrahmaan_As-Sudais_192kbps', name: 'الشيخ عبد الرحمن السديس' },
+  shuraim: { folder: 'Saood_ash-Shuraym_128kbps', name: 'الشيخ سعود الشريم' },
+  dossary: { folder: 'Yasser_Ad-Dussary_128kbps', name: 'الشيخ ياسر الدوسري' },
 };
 
 function fileFor(key, reciter = 'maher') {
