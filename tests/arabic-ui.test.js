@@ -116,3 +116,19 @@ test('team/roster.md and data/employees.json list the same employees', () => {
     assert.ok(md.includes(`| ${e.id} | ${e.name} | ${e.title} | ${e.department} | ${e.level} |`), `Roster mismatch for employee ${e.id}`);
   }
 });
+
+test('the hosted office page shows only Arabic text', () => {
+  const page = read('office/kingdom-office.html');
+  const strings = JSON.parse(page.split('type="application/json">')[1].split('</script>')[0]);
+  for (const [key, value] of leaves(strings)) {
+    assert.ok(!containsLatin(value.replace(/\{\w+\}/g, '')), `Latin text in office strings at "${key}": ${value}`);
+  }
+  const markup = page.replace(/<script[\s\S]*?<\/script>/g, '').replace(/<style[\s\S]*?<\/style>/g, '');
+  const visible = markup.replace(/<[^>]+>/g, ' ');
+  assert.ok(!containsLatin(visible), `Latin text visible in office page: ${visible.match(/[A-Za-z]+/)}`);
+  const lookup = (key) => key.split('.').reduce((o, p) => o?.[p], strings);
+  for (const m of page.matchAll(/data-t="([^"]+)"/g)) assert.equal(typeof lookup(m[1]), 'string', `Missing office key: ${m[1]}`);
+  for (const m of page.matchAll(/\bt\('([\w.]+)'\s*[,)]/g)) assert.ok(lookup(m[1]) !== undefined, `Missing office key in script: ${m[1]}`);
+  const script = page.split('<script>')[1];
+  assert.ok(!/\btext:\s*['"][^'"]*[A-Za-z]/.test(script), 'Literal Latin text in office script');
+});
