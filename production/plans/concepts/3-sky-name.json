@@ -1,0 +1,8 @@
+{
+  "title": "الوهّاب تحت سماء الليل",
+  "theme": "night", "ambience": "water", "allowLatin": true,
+  "scenes": [
+    { "type": "name", "text": "الوهّاب", "en": "Al-Wahhab · The Bestower", "duration": 4, "camera": { "zoomFrom": 1.1, "zoomTo": 1.0 } },
+    { "type": "ayah", "verse": "38:35", "duration": 7.5, "camera": { "zoomFrom": 1.0, "zoomTo": 1.06 } }
+  ]
+}

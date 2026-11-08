@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title data-i18n="app.pageTitle"></title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <div>
+        <h1 data-i18n="app.name"></h1>
+        <p data-i18n="app.tagline"></p>
+      </div>
+    </div>
+    <nav class="tabs" role="tablist">
+      <button class="tab active" data-view="board" data-i18n="nav.board" role="tab"></button>
+      <button class="tab" data-view="chat" data-i18n="nav.chat" role="tab"></button>
+      <button class="tab" data-view="help" data-i18n="nav.help" role="tab"></button>
+    </nav>
+    <span id="live" class="live"></span>
+  </header>
+
+  <main>
+    <section id="view-board" class="view active">
+      <section class="panel attention">
+        <h2 data-i18n="board.attentionTitle"></h2>
+        <div id="attention"></div>
+      </section>
+
+      <section class="panel">
+        <h2 data-i18n="board.employeesTitle"></h2>
+        <div id="employees" class="employee-grid"></div>
+      </section>
+
+      <div class="two-col">
+        <section class="panel">
+          <h2 data-i18n="board.tasksTitle"></h2>
+          <div id="tasks"></div>
+        </section>
+        <section class="panel">
+          <h2 data-i18n="board.activityTitle"></h2>
+          <ol id="activity" class="activity"></ol>
+        </section>
+      </div>
+    </section>
+
+    <section id="view-chat" class="view">
+      <section class="panel chat">
+        <h2 data-i18n="chat.title"></h2>
+        <p class="muted" data-i18n="chat.intro"></p>
+        <div id="messages" class="messages"></div>
+        <p id="chat-error" class="error" hidden></p>
+        <form id="chat-form" class="chat-form">
+          <textarea id="chat-input" rows="3" data-i18n-placeholder="chat.placeholder"></textarea>
+          <button type="submit" id="chat-send" class="primary" data-i18n="chat.send"></button>
+        </form>
+      </section>
+    </section>
+
+    <section id="view-help" class="view">
+      <section class="panel">
+        <h2 data-i18n="help.title"></h2>
+        <ul id="help-items" class="help"></ul>
+      </section>
+    </section>
+  </main>
+
+  <script type="module" src="/app.js"></script>
+</body>
+</html>

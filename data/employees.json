@@ -1,0 +1,13 @@
+[
+  {"id": 1, "name": "ياسين الركباني", "title": "المدير التنفيذي للشركة", "department": "الإدارة التنفيذية", "level": "خبير", "modelTier": "advanced"},
+  {"id": 2, "name": "ميسو", "title": "باحث المحتوى الإسلامي", "department": "البحث والأفكار", "level": "متقدم", "modelTier": "standard"},
+  {"id": 3, "name": "شيمو", "title": "محلل الجمهور والمنافسين", "department": "البحث والأفكار", "level": "متوسط", "modelTier": "light"},
+  {"id": 4, "name": "أوسوا", "title": "المدقق الشرعي", "department": "التحقق الشرعي والتدقيق", "level": "خبير", "modelTier": "advanced"},
+  {"id": 5, "name": "أحمد", "title": "كاتب السيناريو", "department": "الكتابة والسيناريو", "level": "متقدم", "modelTier": "standard"},
+  {"id": 6, "name": "آدم", "title": "كاتب العناوين والترجمة النصية", "department": "الكتابة والسيناريو", "level": "متوسط", "modelTier": "light"},
+  {"id": 7, "name": "منستير", "title": "مصمم الموشن جرافيك والمؤثرات البصرية", "department": "الإنتاج المرئي والتصميم", "level": "متقدم", "modelTier": "standard"},
+  {"id": 8, "name": "سيكابي", "title": "مخرج ومحرر الفيديو", "department": "الإنتاج المرئي والتصميم", "level": "متقدم", "modelTier": "standard"},
+  {"id": 9, "name": "روك", "title": "مدير حساب إنستغرام", "department": "إدارة المنصات والنشر", "level": "متقدم", "modelTier": "standard"},
+  {"id": 10, "name": "سونا", "title": "محلل النمو والأداء", "department": "النمو والتحليلات", "level": "متقدم", "modelTier": "standard"},
+  {"id": 11, "name": "زمرد", "title": "مهندس الصوت والمؤثرات", "department": "الإنتاج المرئي والتصميم", "level": "متقدم", "modelTier": "standard"}
+]

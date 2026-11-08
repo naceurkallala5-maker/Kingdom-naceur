@@ -1,0 +1,91 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Amiri:wght@700&display=swap">
+<style>
+html,body{margin:0;background:#000}
+.c{width:1080px;height:1080px;position:relative;overflow:hidden}
+svg{position:absolute;inset:0}
+.word{position:absolute;left:0;right:0;text-align:center;font-family:'Cinzel';font-weight:700;color:#fff;letter-spacing:18px;padding-left:18px}
+.ar{position:absolute;left:0;right:0;text-align:center;font-family:'Amiri';color:#a9c6f2;direction:rtl}
+</style></head><body>
+
+<!-- 1: geometric crown -->
+<div class="c" id="v1">
+ <svg viewBox="0 0 1080 1080">
+  <defs>
+   <radialGradient id="bg1" cx="50%" cy="40%" r="75%"><stop offset="0" stop-color="#2f5fd0"/><stop offset=".5" stop-color="#1d3a8a"/><stop offset="1" stop-color="#0c1c4d"/></radialGradient>
+   <linearGradient id="cr1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#bcd5f7"/></linearGradient>
+   <filter id="gl1" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="22" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+   <g id="star"><rect x="-1" y="-1" width="2" height="2"/><rect x="-1" y="-1" width="2" height="2" transform="rotate(45)"/></g>
+  </defs>
+  <rect width="1080" height="1080" fill="url(#bg1)"/>
+  <g stroke="#a9c6f2" stroke-opacity=".12" fill="none" stroke-width="2">
+   <circle cx="540" cy="540" r="470"/><circle cx="540" cy="540" r="430"/>
+  </g>
+  <g transform="translate(540 455)" filter="url(#gl1)">
+   <path d="M-230 110 L-250 -120 L-120 10 L0 -190 L120 10 L250 -120 L230 110 Z" fill="url(#cr1)"/>
+   <rect x="-235" y="120" width="470" height="44" rx="10" fill="url(#cr1)"/>
+   <g fill="#1d3a8a">
+    <use href="#star" transform="translate(0 70) scale(26)"/>
+    <use href="#star" transform="translate(-120 85) scale(14)"/>
+    <use href="#star" transform="translate(120 85) scale(14)"/>
+   </g>
+   <g fill="#ffffff">
+    <use href="#star" transform="translate(0 -222) scale(24)"/>
+    <use href="#star" transform="translate(-262 -148) scale(18)"/>
+    <use href="#star" transform="translate(262 -148) scale(18)"/>
+   </g>
+   <g fill="#a9c6f2"><circle cx="-150" cy="142" r="8"/><circle cx="-75" cy="142" r="8"/><circle cx="0" cy="142" r="8"/><circle cx="75" cy="142" r="8"/><circle cx="150" cy="142" r="8"/></g>
+  </g>
+ </svg>
+ <div class="word" style="top:690px;font-size:104px">KINGDOM</div>
+ <div class="ar" style="top:822px;font-size:52px">ناصر</div>
+</div>
+
+<!-- 2: crescent embracing a star -->
+<div class="c" id="v2">
+ <svg viewBox="0 0 1080 1080">
+  <defs>
+   <linearGradient id="bg2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2a56c6"/><stop offset="1" stop-color="#0e2058"/></linearGradient>
+   <linearGradient id="mo2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#a9c6f2"/></linearGradient>
+   <radialGradient id="halo2"><stop offset="0" stop-color="#a9c6f2" stop-opacity=".45"/><stop offset="1" stop-color="#a9c6f2" stop-opacity="0"/></radialGradient>
+   <mask id="m2"><rect width="1080" height="1080" fill="#fff"/><circle cx="600" cy="390" r="190" fill="#000"/></mask>
+  </defs>
+  <rect width="1080" height="1080" fill="url(#bg2)"/>
+  <circle cx="540" cy="440" r="330" fill="url(#halo2)"/>
+  <g fill="#ffffff" opacity=".8"><circle cx="250" cy="250" r="3"/><circle cx="830" cy="210" r="2.5"/><circle cx="880" cy="560" r="3"/><circle cx="200" cy="600" r="2"/><circle cx="760" cy="760" r="2"/><circle cx="320" cy="790" r="2.5"/></g>
+  <circle cx="520" cy="440" r="230" fill="url(#mo2)" mask="url(#m2)"/>
+  <g transform="translate(640 445)" fill="#ffffff">
+   <rect x="-62" y="-62" width="124" height="124"/><rect x="-62" y="-62" width="124" height="124" transform="rotate(45)"/>
+   <g fill="#1d3a8a"><rect x="-30" y="-30" width="60" height="60"/><rect x="-30" y="-30" width="60" height="60" transform="rotate(45)"/></g>
+  </g>
+ </svg>
+ <div class="word" style="top:715px;font-size:100px">KINGDOM</div>
+ <div class="ar" style="top:843px;font-size:50px">ناصر</div>
+</div>
+
+<!-- 3: lantern -->
+<div class="c" id="v3">
+ <svg viewBox="0 0 1080 1080">
+  <defs>
+   <radialGradient id="bg3" cx="50%" cy="38%" r="75%"><stop offset="0" stop-color="#284fb6"/><stop offset="1" stop-color="#0d1d52"/></radialGradient>
+   <radialGradient id="glow3"><stop offset="0" stop-color="#ffffff" stop-opacity=".95"/><stop offset=".35" stop-color="#d7e6fa" stop-opacity=".6"/><stop offset="1" stop-color="#a9c6f2" stop-opacity="0"/></radialGradient>
+  </defs>
+  <rect width="1080" height="1080" fill="url(#bg3)"/>
+  <circle cx="540" cy="440" r="300" fill="url(#glow3)" opacity=".35"/>
+  <line x1="540" y1="70" x2="540" y2="160" stroke="#a9c6f2" stroke-width="5"/>
+  <circle cx="540" cy="175" r="16" fill="none" stroke="#ffffff" stroke-width="6"/>
+  <g transform="translate(540 0)" fill="none" stroke="#ffffff" stroke-width="9" stroke-linejoin="round">
+   <path d="M-70 195 L70 195 L95 250 L-95 250 Z" fill="#ffffff"/>
+   <path d="M-95 250 L-150 330 L-150 560 L-95 640 L95 640 L150 560 L150 330 L95 250"/>
+   <path d="M-95 640 L-60 690 L60 690 L95 640" fill="#ffffff"/>
+   <line x1="0" y1="250" x2="0" y2="640" stroke-width="5" stroke="#a9c6f2"/>
+   <line x1="-150" y1="445" x2="150" y2="445" stroke-width="4" stroke="#a9c6f2"/>
+  </g>
+  <circle cx="540" cy="445" r="70" fill="url(#glow3)"/>
+  <g transform="translate(540 445)" fill="#ffffff"><rect x="-26" y="-26" width="52" height="52"/><rect x="-26" y="-26" width="52" height="52" transform="rotate(45)"/></g>
+  <path d="M520 690 L540 735 L560 690 Z" fill="#a9c6f2"/>
+ </svg>
+ <div class="word" style="top:770px;font-size:96px">KINGDOM</div>
+ <div class="ar" style="top:893px;font-size:46px">ناصر</div>
+</div>
+</body></html>

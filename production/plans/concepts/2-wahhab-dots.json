@@ -1,0 +1,9 @@
+{
+  "title": "الوهّاب في 3 آيات من 6236",
+  "theme": "night", "ambience": "wind", "allowLatin": true,
+  "scenes": [
+    { "type": "dots", "text": "كل نقطة آية… وثلاثٌ منها فيها اسم الوهّاب", "highlight": ["الوهّاب"], "en": "Each dot is a verse. Three of them hold the name Al-Wahhab", "word": "الوهاب",
+      "caption": "6236 آية", "captionEn": "ALL VERSES", "duration": 7.5 },
+    { "type": "name", "text": "الوهّاب", "en": "The Bestower", "duration": 4, "camera": { "zoomFrom": 1.0, "zoomTo": 1.08 } }
+  ]
+}

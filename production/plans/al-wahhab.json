@@ -1,0 +1,25 @@
+{
+  "title": "اسم الله الوهّاب",
+  "scenes": [
+    { "type": "hook", "text": "ثلاثُ آياتٍ فقط فيها اسم الوهّاب", "highlight": ["الوهّاب"], "duration": 3.2,
+      "camera": { "zoomFrom": 1.12, "zoomTo": 1.0 },
+      "visual": "افتتاح بتكبير عكسي، وشعاع ضوء يمر على النص" },
+    { "type": "name", "text": "الوهّاب", "duration": 3.4,
+      "camera": { "zoomFrom": 1.0, "zoomTo": 1.1 },
+      "visual": "الاسم بخط الرقعة يظهر من ضباب، والزخرفة خلفه تكبر وتدور، وانفجار نقاط ضوء" },
+    { "type": "text", "kicker": "المعنى", "text": "الذي يُكثر العطاء ويُديمه، ويهَب بلا عِوَض ولا مقابل", "highlight": ["العطاء", "يهَب"], "duration": 5,
+      "camera": { "zoomFrom": 1.0, "zoomTo": 1.06, "panFrom": [0.02, 0], "panTo": [-0.02, 0] },
+      "visual": "حركة كاميرا أفقية بطيئة، والكلمات تظهر واحدة بعد الأخرى" },
+    { "type": "text", "kicker": "دعاء الراسخين في العلم", "text": "سألوا الله ثبات القلوب بهذا الاسم", "highlight": ["ثبات", "القلوب"], "duration": 3.6,
+      "camera": { "zoomFrom": 1.05, "zoomTo": 1.0 } },
+    { "type": "ayah", "verse": "3:8", "duration": 8,
+      "camera": { "zoomFrom": 1.0, "zoomTo": 1.07 },
+      "visual": "قوس محراب يُرسم حول الآية، وأشعة ضوء أقوى، والكلمات تظهر بهدوء" },
+    { "type": "text", "kicker": "دعاء سليمان عليه السلام", "text": "وختم دعاءه بالاسم نفسه", "highlight": ["بالاسم"], "duration": 3,
+      "camera": { "zoomFrom": 1.04, "zoomTo": 1.0, "panFrom": [0, 0.01], "panTo": [0, -0.01] } },
+    { "type": "ayah", "verse": "38:35", "duration": 7.5,
+      "camera": { "zoomFrom": 1.0, "zoomTo": 1.07 } },
+    { "type": "outro", "text": "ادعُ الله باسمه الوهّاب", "highlight": ["الوهّاب"], "sub": "سلسلة أسماء الله الحسنى", "duration": 4.5,
+      "camera": { "zoomFrom": 1.08, "zoomTo": 1.0 } }
+  ]
+}

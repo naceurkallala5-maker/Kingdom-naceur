@@ -1,0 +1,9 @@
+{
+  "title": "سبع سور تُفتتح بالتسبيح",
+  "theme": "night", "ambience": "night", "allowLatin": true,
+  "scenes": [
+    { "type": "surahs", "text": "سبعُ سورٍ تُفتتح بالتسبيح", "en": "Seven surahs open with glorification", "opening": ["سبح", "يسبح"],
+      "caption": "114 سورة بترتيب المصحف", "captionEn": "114 SURAHS, IN ORDER", "duration": 7.5, "camera": { "zoomFrom": 1.0, "zoomTo": 1.04 } },
+    { "type": "outro", "text": "سبحان الله وبحمده", "en": "Glory be to Allah", "duration": 4, "camera": { "zoomFrom": 1.06, "zoomTo": 1.0 } }
+  ]
+}

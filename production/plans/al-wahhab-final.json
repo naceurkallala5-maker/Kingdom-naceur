@@ -1,0 +1,14 @@
+{
+  "title": "الوهّاب · نسخة النشر",
+  "theme": "night", "accent": "gold", "ambience": "night", "allowLatin": true, "reciter": "maher",
+  "scenes": [
+    { "type": "hook", "text": "اسمٌ لله لم يرد إلا في ثلاث آيات", "highlight": ["ثلاث"], "en": "A name of Allah found in only three verses", "duration": 3.2,
+      "camera": { "zoomFrom": 1.12, "zoomTo": 1.0 } },
+    { "type": "dots", "text": "كل نقطة آية… وثلاثٌ فقط فيها هذا الاسم", "highlight": ["ثلاثٌ"], "en": "Each dot is a verse", "word": "الوهاب",
+      "caption": "6236 آية", "captionEn": "ALL VERSES", "duration": 6.5 },
+    { "type": "name", "text": "الوهّاب", "en": "Al-Wahhab · The Bestower", "duration": 3.6, "camera": { "zoomFrom": 1.0, "zoomTo": 1.08 } },
+    { "type": "ayah", "verse": "3:8", "duration": 8, "camera": { "zoomFrom": 1.0, "zoomTo": 1.06 } },
+    { "type": "outro", "text": "ادعُ الله باسمه الوهّاب", "highlight": ["الوهّاب"], "en": "Call upon Him by His name", "sub": "سلسلة أسماء الله الحسنى", "duration": 4,
+      "camera": { "zoomFrom": 1.08, "zoomTo": 1.0 } }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "name": "kingdom-naceur",
+  "version": "0.2.0",
+  "private": true,
+  "description": "Kingdom Nasser: an Arabic-only virtual AI company for Islamic digital content.",
+  "type": "module",
+  "engines": {
+    "node": ">=22.13"
+  },
+  "scripts": {
+    "start": "node --disable-warning=ExperimentalWarning src/server.js",
+    "office": "node --disable-warning=ExperimentalWarning scripts/office-cli.js",
+    "test": "node --disable-warning=ExperimentalWarning --test tests/*.test.js"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^1.6.0"
+  }
+}
