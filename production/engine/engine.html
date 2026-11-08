@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="ar" dir="ltr">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri+Quran&family=Amiri:wght@400;700&family=Aref+Ruqaa:wght@700&family=IBM+Plex+Sans+Arabic:wght@500;700&family=Cinzel:wght@700&display=swap">
+<style>
+/* Kingdom Nasser motion engine. Every frame is a pure function of time t (render(t)),
+   so preview and export are identical. */
+:root { --royal:#1d3a8a; --royal-hi:#2f5fd0; --deep:#0a1840; --sky:#a9c6f2; --ice:#d7e6fa; --u:1px; }
+html, body { margin:0; overflow:hidden; background:var(--deep); }
+#stage { position:relative; overflow:hidden; }
+.layer { position:absolute; inset:0; }
+#bg { background: radial-gradient(circle at 50% 40%, var(--royal-hi) 0, var(--royal) 42%, var(--deep) 100%); }
+#tess { inset:-25%; opacity:.09; background-repeat:repeat; }
+#rosette, #rosette2 { display:flex; align-items:center; justify-content:center; }
+#rays { mix-blend-mode:screen; }
+#vignette { background: radial-gradient(ellipse at center, transparent 55%, rgba(5,12,35,.75) 100%); }
+#frame { border:calc(3*var(--u)) solid rgba(255,255,255,.5); border-radius:calc(26*var(--u)); inset:calc(48*var(--u)); }
+#frame2 { border:calc(1.5*var(--u)) solid rgba(169,198,242,.45); border-radius:calc(18*var(--u)); inset:calc(64*var(--u)); }
+.scene { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; direction:rtl; text-align:center; color:#fff; padding:0 calc(120*var(--u)); box-sizing:border-box; visibility:hidden; }
+.words { line-height:1.7; max-width:calc(840*var(--u)); }
+.w { display:inline-block; white-space:pre; will-change:transform, opacity, filter; }
+.w.hl { color:var(--ice); text-shadow:0 0 calc(24*var(--u)) rgba(169,198,242,.9), 0 0 calc(60*var(--u)) rgba(120,170,255,.6); }
+.t-hook .words { font-family:'IBM Plex Sans Arabic'; font-weight:700; font-size:calc(88*var(--u)); }
+.t-text .words { font-family:'IBM Plex Sans Arabic'; font-weight:500; font-size:calc(66*var(--u)); }
+.t-ayah .words { font-family:'Amiri Quran'; font-size:calc(80*var(--u)); line-height:2.1; max-width:calc(860*var(--u)); }
+.t-name .words { font-family:'Aref Ruqaa'; font-size:calc(300*var(--u)); line-height:1.25; color:#fff; text-shadow:0 0 calc(30*var(--u)) rgba(169,198,242,.95), 0 0 calc(90*var(--u)) rgba(110,160,255,.7), 0 calc(8*var(--u)) calc(30*var(--u)) rgba(5,15,50,.5); }
+.t-outro .words { font-family:'IBM Plex Sans Arabic'; font-weight:700; font-size:calc(72*var(--u)); }
+.landscape .t-ayah .words { font-size:calc(62*var(--u)); max-width:calc(1300*var(--u)); }
+.landscape .t-text .words, .landscape .t-hook .words { max-width:calc(1400*var(--u)); }
+.kicker { font-family:'Amiri'; font-size:calc(44*var(--u)); color:var(--sky); margin-bottom:calc(24*var(--u)); letter-spacing:calc(1*var(--u)); }
+.ref { font-family:'Amiri'; font-size:calc(42*var(--u)); color:var(--sky); margin-top:calc(40*var(--u)); }
+.sub { font-family:'Amiri'; font-size:calc(48*var(--u)); color:var(--ice); margin-top:calc(30*var(--u)); }
+.arch { position:absolute; inset:0; pointer-events:none; }
+.crown { width:calc(260*var(--u)); height:calc(210*var(--u)); margin-bottom:calc(36*var(--u)); }
+#brand { position:absolute; left:0; right:0; text-align:center; color:var(--ice); direction:rtl; }
+#brand .wm { font-family:'Cinzel'; font-weight:700; letter-spacing:calc(10*var(--u)); font-size:calc(38*var(--u)); color:#fff; }
+#brand .ar { font-family:'Amiri'; font-size:calc(28*var(--u)); }
+#credit { position:absolute; left:0; right:0; text-align:center; font-family:'Amiri'; font-size:calc(26*var(--u)); color:rgba(215,230,250,.7); direction:rtl; }
+#sweep { background:linear-gradient(105deg, transparent 35%, rgba(215,230,250,.0) 40%, rgba(235,243,255,.85) 50%, rgba(215,230,250,0) 60%, transparent 65%); mix-blend-mode:screen; }
+#flash { background:#fff; mix-blend-mode:screen; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="world" class="layer">
+    <div id="bg" class="layer"></div>
+    <div id="tess" class="layer"></div>
+    <div id="rosette" class="layer"></div>
+    <canvas id="rays" class="layer"></canvas>
+    <canvas id="particles" class="layer"></canvas>
+  </div>
+  <div id="scenes" class="layer"></div>
+  <div id="vignette" class="layer"></div>
+  <div id="frame" class="layer"></div>
+  <div id="frame2" class="layer"></div>
+  <div id="sweep" class="layer"></div>
+  <div id="flash" class="layer"></div>
+  <div id="brand"><div class="wm">KINGDOM</div><div class="ar">ناصر</div></div>
+  <div id="credit"></div>
+</div>
+<script>
+const E = (() => {
+  let W = 1080, H = 1920, U = 1, scenes = [], total = 0, cues = [];
+  const TR = 0.55;                       // transition length (s)
+  const ease = (x) => x <= 0 ? 0 : x >= 1 ? 1 : 1 - Math.pow(1 - x, 3);
+  const easeIO = (x) => x <= 0 ? 0 : x >= 1 ? 1 : x < .5 ? 4*x*x*x : 1 - Math.pow(-2*x + 2, 3) / 2;
+  const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
+  const lerp = (a, b, k) => a + (b - a) * k;
+  function rng(seed) { let s = seed >>> 0; return () => ((s = (s * 1664525 + 1013904223) >>> 0) / 4294967296); }
+
+  // ---- geometry: an 8-fold Islamic rosette and a tessellation tile ----
+  function rosetteSVG(size, stroke) {
+    const g = [];
+    for (let ring = 0; ring < 5; ring++) {
+      const r = size * (0.18 + ring * 0.16);
+      for (let k = 0; k < 2; k++) g.push(`<rect x="${-r}" y="${-r}" width="${2*r}" height="${2*r}" transform="rotate(${k*45 + ring*11.25})" />`);
+      g.push(`<circle r="${r * 1.414}" stroke-opacity=".35"/>`);
+    }
+    const pts = [];
+    for (let i = 0; i < 16; i++) { const a = i * Math.PI / 8, r = i % 2 ? size * .42 : size * .62; pts.push((Math.cos(a)*r).toFixed(1) + ',' + (Math.sin(a)*r).toFixed(1)); }
+    g.push(`<polygon points="${pts.join(' ')}" />`);
+    return `<svg width="${size*2.4}" height="${size*2.4}" viewBox="${-size*1.2} ${-size*1.2} ${size*2.4} ${size*2.4}"><g fill="none" stroke="${stroke}" stroke-width="${2*U}">${g.join('')}</g></svg>`;
+  }
+  function tile(sz) {
+    return `url("data:image/svg+xml,${encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='${sz}' height='${sz}'><g fill='none' stroke='#a9c6f2' stroke-width='${2*U}'><rect x='${sz*.29}' y='${sz*.29}' width='${sz*.42}' height='${sz*.42}'/><rect x='${sz*.29}' y='${sz*.29}' width='${sz*.42}' height='${sz*.42}' transform='rotate(45 ${sz/2} ${sz/2})'/><circle cx='${sz/2}' cy='${sz/2}' r='${sz*.12}'/></g></svg>`)}")`;
+  }
+  const CROWN = '<svg class="crown" viewBox="-260 -240 520 420"><defs><linearGradient id="cg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#bcd5f7"/></linearGradient></defs><path d="M-230 110 L-250 -120 L-120 10 L0 -190 L120 10 L250 -120 L230 110 Z" fill="url(#cg)"/><rect x="-235" y="120" width="470" height="44" rx="10" fill="url(#cg)"/><g fill="#fff"><g transform="translate(0 -222) scale(24)"><rect x="-1" y="-1" width="2" height="2"/><rect x="-1" y="-1" width="2" height="2" transform="rotate(45)"/></g><g transform="translate(-262 -148) scale(18)"><rect x="-1" y="-1" width="2" height="2"/><rect x="-1" y="-1" width="2" height="2" transform="rotate(45)"/></g><g transform="translate(262 -148) scale(18)"><rect x="-1" y="-1" width="2" height="2"/><rect x="-1" y="-1" width="2" height="2" transform="rotate(45)"/></g></g></svg>';
+
+  // ---- particles: deterministic, a pure function of t ----
+  let P = [];
+  function initParticles() {
+    const r = rng(7); P = [];
+    for (let i = 0; i < 90; i++) P.push({ x: r(), y: r(), s: 0.6 + r() * 2.4, v: 0.008 + r() * 0.03, ph: r() * 6.28, tw: 0.6 + r() * 1.6, dx: (r() - .5) * .02 });
+  }
+  function drawParticles(t, burst) {
+    const c = document.getElementById('particles'), g = c.getContext('2d');
+    g.clearRect(0, 0, W, H);
+    for (const p of P) {
+      const y = ((p.y - p.v * t) % 1 + 1) % 1, x = ((p.x + p.dx * Math.sin(t * .5 + p.ph)) % 1 + 1) % 1;
+      const a = 0.25 + 0.55 * (0.5 + 0.5 * Math.sin(t * p.tw + p.ph));
+      const rad = p.s * U * 2.2 * (1 + burst * 1.5);
+      const grd = g.createRadialGradient(x*W, y*H, 0, x*W, y*H, rad * 3);
+      grd.addColorStop(0, `rgba(230,240,255,${a})`); grd.addColorStop(1, 'rgba(169,198,242,0)');
+      g.fillStyle = grd; g.beginPath(); g.arc(x*W, y*H, rad * 3, 0, 6.283); g.fill();
+    }
+  }
+  function drawRays(t, k) {
+    const c = document.getElementById('rays'), g = c.getContext('2d');
+    g.clearRect(0, 0, W, H);
+    const cx = W / 2, cy = H * 0.18;
+    for (let i = 0; i < 9; i++) {
+      const a = Math.PI / 2 + Math.sin(t * .15 + i) * .5 + (i - 4) * .13;
+      const len = H * 1.1, wd = 0.05 + 0.03 * Math.sin(t * .4 + i * 2);
+      g.save(); g.translate(cx, cy); g.rotate(a - Math.PI / 2);
+      const grd = g.createLinearGradient(0, 0, 0, len);
+      grd.addColorStop(0, `rgba(210,228,255,${0.10 * k})`); grd.addColorStop(1, 'rgba(210,228,255,0)');
+      g.fillStyle = grd; g.beginPath(); g.moveTo(0, 0); g.lineTo(-len * wd, len); g.lineTo(len * wd, len); g.closePath(); g.fill(); g.restore();
+    }
+  }
+
+  function buildScene(s, i) {
+    const d = document.createElement('div');
+    d.className = 'scene t-' + s.type; d.id = 'sc' + i;
+    if (s.type === 'outro') d.insertAdjacentHTML('beforeend', CROWN);
+    if (s.kicker) { const k = document.createElement('div'); k.className = 'kicker'; k.textContent = s.kicker; d.append(k); }
+    const box = document.createElement('div'); box.className = 'words';
+    const words = s.text.split(/\s+/).filter(Boolean);
+    const hl = new Set(s.highlight || []);
+    words.forEach((w, j) => {
+      const sp = document.createElement('span'); sp.className = 'w' + ([...hl].some((h) => w.includes(h)) ? ' hl' : '');
+      sp.textContent = w + (j < words.length - 1 ? ' ' : ''); box.append(sp);
+    });
+    d.append(box);
+    if (s.ref) { const r = document.createElement('div'); r.className = 'ref'; r.textContent = s.ref; d.append(r); }
+    if (s.sub) { const r = document.createElement('div'); r.className = 'sub'; r.textContent = s.sub; d.append(r); }
+    if (s.type === 'ayah') {
+      const aw = W * (W > H ? .7 : .78), ah = H * (W > H ? .74 : .62), x0 = (W - aw) / 2, y0 = (H - ah) / 2 + ah * .02;
+      const path = `M${x0} ${y0 + ah} V${y0 + ah * .32} Q${x0} ${y0 + ah * .1} ${W/2} ${y0} Q${x0 + aw} ${y0 + ah * .1} ${x0 + aw} ${y0 + ah * .32} V${y0 + ah}`;
+      d.insertAdjacentHTML('afterbegin', `<svg class="arch" viewBox="0 0 ${W} ${H}"><path d="${path}" fill="none" stroke="rgba(215,230,250,.75)" stroke-width="${3*U}" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1"/></svg>`);
+    }
+    document.getElementById('scenes').append(d);
+    return { el: d, words: [...box.children], arch: d.querySelector('.arch path') };
+  }
+
+  function setup(data) {
+    W = data.width; H = data.height; U = Math.min(W, H) / 1080;
+    const st = document.getElementById('stage');
+    st.style.width = W + 'px'; st.style.height = H + 'px';
+    st.classList.toggle('landscape', W > H);
+    document.documentElement.style.setProperty('--u', U + 'px');
+    for (const id of ['rays', 'particles']) { const c = document.getElementById(id); c.width = W; c.height = H; }
+    document.getElementById('tess').style.backgroundImage = tile(Math.round(150 * U));
+    document.getElementById('rosette').innerHTML = rosetteSVG(Math.min(W, H) * 0.5, 'rgba(169,198,242,.16)');
+    const brand = document.getElementById('brand'); brand.style.bottom = Math.round((W > H ? 70 : 110) * U) + 'px';
+    const credit = document.getElementById('credit'); credit.style.top = Math.round((W > H ? 70 : 96) * U) + 'px'; credit.textContent = data.credit || '';
+    initParticles();
+    scenes = []; cues = []; total = 0;
+    data.scenes.forEach((s, i) => {
+      const built = buildScene(s, i);
+      const n = built.words.length;
+      const reveal = s.type === 'ayah' ? Math.min(0.42, (s.duration * 0.55) / n) : s.type === 'name' ? 0 : Math.min(0.16, (s.duration * 0.4) / n);
+      scenes.push({ ...s, ...built, start: total, reveal });
+      cues.push({ t: total + 0.25, kind: s.type === 'ayah' ? 'soft' : 'chime' });
+      total += s.duration;
+    });
+    return { total, cues };
+  }
+
+  function camera(s, lt) {
+    const c = s.camera || {}, k = easeIO(clamp(lt / s.duration, 0, 1));
+    const z = lerp(c.zoomFrom ?? 1.0, c.zoomTo ?? 1.08, k);
+    const x = lerp(c.panFrom?.[0] ?? 0, c.panTo?.[0] ?? 0, k) * W;
+    const y = lerp(c.panFrom?.[1] ?? 0, c.panTo?.[1] ?? 0, k) * H;
+    return { z, x, y };
+  }
+
+  function render(t) {
+    let cur = scenes.findIndex((s) => t >= s.start && t < s.start + s.duration);
+    if (cur < 0) cur = scenes.length - 1;
+    const s = scenes[cur], lt = t - s.start;
+    // world camera (Ken Burns) + slow geometry motion
+    const cam = camera(s, lt);
+    document.getElementById('world').style.transform = `translate(${cam.x}px,${cam.y}px) scale(${cam.z})`;
+    document.getElementById('tess').style.transform = `translate(${(t * 9 * U) % (150 * U)}px, ${(t * 6 * U) % (150 * U)}px)`;
+    const nameBoost = s.type === 'name' ? ease(lt / 0.8) : 0;
+    document.getElementById('rosette').style.transform = `rotate(${t * 4}deg) scale(${1 + 0.15 * nameBoost})`;
+    document.getElementById('rosette').style.opacity = 0.7 + 0.6 * nameBoost;
+    drawRays(t, s.type === 'ayah' || s.type === 'name' ? 1.6 : 1);
+    drawParticles(t, s.type === 'name' ? Math.max(0, 1 - lt / 1.2) : 0);
+    // scenes
+    scenes.forEach((sc, i) => {
+      const l = t - sc.start, vis = i === cur;
+      sc.el.style.visibility = vis ? 'visible' : 'hidden';
+      if (!vis) return;
+      const out = clamp((sc.duration - l) / 0.35, 0, 1);
+      const last = i === scenes.length - 1;
+      const fadeOut = last ? 1 : out;
+      sc.el.style.opacity = fadeOut;
+      const parallax = (cam.z - 1) * -120 * U;
+      sc.el.style.transform = `translateY(${parallax}px) scale(${1 + (cam.z - 1) * 0.4})`;
+      if (sc.type === 'name') {
+        const k = ease(l / 0.9);
+        sc.words.forEach((w) => { w.style.opacity = k; w.style.transform = `scale(${1.25 - 0.25 * k})`; w.style.filter = `blur(${(1 - k) * 18 * U}px)`; });
+      } else {
+        sc.words.forEach((w, j) => {
+          const k = ease((l - 0.2 - j * sc.reveal) / 0.45);
+          w.style.opacity = k;
+          w.style.transform = `translateY(${(1 - k) * 28 * U}px)`;
+          w.style.filter = `blur(${(1 - k) * 10 * U}px)`;
+        });
+      }
+      for (const cls of ['kicker', 'ref', 'sub', 'crown']) {
+        const e = sc.el.querySelector('.' + cls); if (!e) continue;
+        const delay = cls === 'kicker' ? 0.05 : cls === 'crown' ? 0 : 0.2 + sc.words.length * sc.reveal + 0.2;
+        const k = ease((l - delay) / 0.6);
+        e.style.opacity = k; e.style.transform = cls === 'crown' ? `scale(${0.6 + 0.4 * k}) translateY(${(1 - k) * -30 * U}px)` : `translateY(${(1 - k) * 16 * U}px)`;
+      }
+      if (sc.arch) sc.arch.setAttribute('stroke-dashoffset', String(1 - easeIO(l / 1.6)));
+    });
+    // transition: light sweep across each cut, plus a soft flash
+    let sweep = -1, flash = 0;
+    for (let i = 1; i < scenes.length; i++) {
+      const d = t - scenes[i].start;
+      if (Math.abs(d) < TR) { sweep = (d + TR) / (2 * TR); flash = Math.max(flash, 0.22 * (1 - Math.abs(d) / TR)); }
+    }
+    const sw = document.getElementById('sweep');
+    sw.style.opacity = sweep < 0 ? 0 : 1;
+    sw.style.transform = `translateX(${lerp(-110, 110, sweep < 0 ? 0 : sweep)}%)`;
+    document.getElementById('flash').style.opacity = flash;
+  }
+  return { setup, render };
+})();
+</script>
+</body>
+</html>

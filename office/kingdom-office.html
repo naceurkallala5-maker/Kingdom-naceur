@@ -272,6 +272,13 @@ input.text, textarea { width: 100%; font: inherit; color: var(--fg); background:
   const when = (iso) => (iso ? fmt.format(new Date(iso)) : '');
   const nowIso = () => new Date().toISOString();
   const LATIN = /[A-Za-z]/;
+  // Arabic is the primary language. English or French words are allowed inside
+  // content (a brand name, a quote), but a text that is mostly Latin is refused.
+  function notArabicFirst(v) {
+    const str = String(v ?? '');
+    const lat = (str.match(/[A-Za-z\u00C0-\u00FF]/g) || []).length, ara = (str.match(/[\u0600-\u06FF]/g) || []).length;
+    return lat + ara > 0 && lat / (lat + ara) > 0.2;
+  }
   const $ = (id) => document.getElementById(id);
   function el(tag, opts = {}, kids = []) {
     const n = document.createElement(tag);
@@ -317,7 +324,7 @@ input.text, textarea { width: 100%; font: inherit; color: var(--fg); background:
   };
   const TIER = { advanced: 'complex', standard: 'default', light: 'quick' };
   const RULES_COMMON = [
-    'اكتب بالعربية الفصحى المعاصرة فقط. لا تستخدم أي حرف لاتيني إطلاقاً في أي حقل، واكتب أسماء المنصات بالعربية (إنستغرام، تيك توك، يوتيوب، ميتا). الأرقام بالشكل 123.',
+    'اكتب بالعربية الفصحى المعاصرة، فهي اللغة الأساسية دائماً حتى لو كتب المالك بالإنجليزية أو الفرنسية. يُسمح بكلمات إنجليزية أو فرنسية قليلة عند الحاجة فقط، مثل اسم العلامة أو اقتباس. اكتب أسماء المنصات بالعربية (إنستغرام، تيك توك، يوتيوب، ميتا). الأرقام بالشكل 123.',
     'لا تكتب نص أي آية قرآنية من ذاكرتك أبداً. اكتب مكانها: [نص الآية من المصحف الموثّق: سورة كذا، الآية كذا].',
     'لا تقبل من الأحاديث إلا الصحيح والحسن، واذكر المصدر. ما لم تتأكد منه صنّفه "يحتاج تحققاً من المصدر" وارفعه قراراً من نوع sharia_review.',
     'أي حكم شرعي أو فتوى يُرفع إلى المالك بقرار من نوع sharia_review.',
@@ -450,7 +457,6 @@ input.text, textarea { width: 100%; font: inherit; color: var(--fg); background:
   async function logEvent(ev) { await col('events').add({ ...ev, at: nowIso() }); }
   async function decide(a, decision, note) {
     try {
-      if (note && LATIN.test(note)) { flash(t('err.non_arabic')); return; }
       await col('approvals').doc(a.id).update({ status: decision, ownerNote: note || '', decidedAt: nowIso() });
       if (a.taskId) {
         const others = S.approvals.filter((x) => x.taskId === a.taskId && x.status === 'pending' && x.id !== a.id);
@@ -482,7 +488,7 @@ input.text, textarea { width: 100%; font: inherit; color: var(--fg); background:
 
   // ---------- Claude calls (viewer's own account, no extra charge) ----------
   function errText(e) { const c = e && e.code; return get('err.' + c) ? t('err.' + c) : t('err.generic'); }
-  function hasLatin(v) { if (typeof v === 'string') return LATIN.test(v); if (Array.isArray(v)) return v.some(hasLatin); if (v && typeof v === 'object') return Object.entries(v).some(([k, x]) => k !== 'kind' && k !== 'status' && hasLatin(x)); return false; }
+  function hasLatin(v) { if (typeof v === 'string') return notArabicFirst(v); if (Array.isArray(v)) return v.some(hasLatin); if (v && typeof v === 'object') return Object.entries(v).some(([k, x]) => k !== 'kind' && k !== 'status' && hasLatin(x)); return false; }
 
   function companyState() {
     const roster = S.employees.map((e) => `${e.id}. ${e.name}: ${e.title} (${e.department})`).join('\n');
@@ -531,9 +537,9 @@ input.text, textarea { width: 100%; font: inherit; color: var(--fg); background:
         execCtl = new AbortController();
         const res = await sample(turns, { tools, modelTier: 'complex', signal: execCtl.signal, onText: ({ text: x }) => { note.textContent = x; } });
         reply = res.text.trim();
-        if (!LATIN.test(reply)) break;
+        if (!notArabicFirst(reply)) break;
         if (attempt === 1) throw { code: 'non_arabic' };
-        turns.push({ role: 'assistant', content: reply }, { role: 'user', content: 'أعد كتابة ردك بالعربية الفصحى فقط دون أي حرف لاتيني.' });
+        turns.push({ role: 'assistant', content: reply }, { role: 'user', content: 'أعد كتابة ردك بالعربية الفصحى، واترك الكلمات الأجنبية للضرورة فقط.' });
       }
       await col('messages').add({ role: 'executive', content: reply, at: nowIso() });
       note.hidden = true;
@@ -627,7 +633,7 @@ ${dep ? `\nناتج المرحلة السابقة (من ${emp(dep.employeeId)?.n
       let text = '';
       for (let attempt = 0; attempt < 2; attempt++) {
         const res = await sample(EXEC_RULES + '\n\nحالة الشركة الآن:\n' + companyState() + '\n\nالمطلوب:\n' + ask + (attempt ? '\nاكتب بالعربية فقط دون أي حرف لاتيني.' : ''), { modelTier: 'complex', cache: false, onText: ({ text: x }) => { note.textContent = x; } });
-        text = res.text.trim(); if (!LATIN.test(text)) break; if (attempt === 1) throw { code: 'non_arabic' };
+        text = res.text.trim(); if (!notArabicFirst(text)) break; if (attempt === 1) throw { code: 'non_arabic' };
       }
       const title = (daily ? t('reports.kindDaily') : t('reports.kindWeekly')) + ' · ' + when(nowIso());
       await col('reports').add({ kind, employeeId: 1, title, body: text, at: nowIso(), scheduled: false });
